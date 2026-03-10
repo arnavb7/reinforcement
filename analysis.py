@@ -21,7 +21,8 @@
 
 def question2():
     answerDiscount = 0.9
-    answerNoise = 0.2
+    # changed answerNoise to 0 to make policy deterministic, no slipping off bridge
+    answerNoise = 0
     return answerDiscount, answerNoise
 
 def question3a():
