@@ -59,9 +59,17 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.values = util.Counter() # A Counter is a dict with default 0
         self.runValueIteration()
 
+    # called upon construction of ValueIterationAgent
     def runValueIteration(self):
-        # Write value iteration code here
-        "*** YOUR CODE HERE ***"
+        for i in range(self.iterations):
+            new_values = util.Counter()
+            for state in self.mdp.getStates():
+                if self.mdp.isTerminal(state):
+                    continue
+                actions = self.mdp.getPossibleActions(state)
+                # rather than return the best action, this square's value becomes the best QValue
+                new_values[state] = max(self.computeQValueFromValues(state, a) for a in actions)
+            self.values = new_values
 
 
     def getValue(self, state):
@@ -76,9 +84,14 @@ class ValueIterationAgent(ValueEstimationAgent):
           Compute the Q-value of action in state from the
           value function stored in self.values.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        QValue = 0
+        for next_state, probability in self.mdp.getTransitionStatesAndProbs(state, action):
+            reward = self.mdp.getReward(state, action, next_state)
+            # values are accessed offline, self.values persisted from value iteration
+            QValue += probability * (reward + self.discount * self.values[next_state])
+        return QValue
 
+    # for value iteration agent itself
     def computeActionFromValues(self, state):
         """
           The policy is the best action in the given state
@@ -88,8 +101,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return None.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # if there's multiple actions with same max QValue, agent picks first argmax
+        actions = self.mdp.getPossibleActions(state)
+        if not actions:
+            return None
+        # best action from generator expression returning action and QValues
+        return max(actions, key = lambda a: self.computeQValueFromValues(state, a))
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
