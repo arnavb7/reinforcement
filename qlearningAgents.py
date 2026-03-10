@@ -110,6 +110,7 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         estimated_value = reward + self.discount * self.computeValueFromQValues(nextState)
+        # only the learning rate percentage of new value is added to old value
         self.q_values[(state, action)] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * estimated_value
 
     def getPolicy(self, state):
