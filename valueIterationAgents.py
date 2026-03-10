@@ -145,8 +145,18 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         """
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
+    # called upon construction of ValueIterationAgent
     def runValueIteration(self):
-        "*** YOUR CODE HERE ***"
+        states = self.mdp.getStates()
+        for i in range(self.iterations):
+            state_index = i % len(states)
+            state = states[state_index]
+            if self.mdp.isTerminal(state):
+                continue
+            actions = self.mdp.getPossibleActions(state)
+            # rather than return the best action, this square's value becomes the best QValue
+            # we can also update self.values directly, as we look at one state at a time
+            self.values[state] = max(self.computeQValueFromValues(state, a) for a in actions)
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """
