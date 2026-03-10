@@ -78,6 +78,7 @@ class QLearningAgent(ReinforcementAgent):
         if not actions:
             return None
         bestValue = max(self.getQValue(state, a) for a in actions)
+        # generated list of all best value actions, then random choice
         bestActions = [a for a in actions if self.getQValue(state, a) == bestValue]
         return random.choice(bestActions)
 
